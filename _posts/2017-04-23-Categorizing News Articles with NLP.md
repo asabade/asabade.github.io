@@ -753,7 +753,7 @@ Although sentiment scores can range from -1 to 1, I found that the scores of art
 
 
 
-![png](../../../images/capstone_final_writeup_files/capstone_final_writeup_25_0.png)
+![png](/img/nlp/25_0.png)
 
 
 
@@ -765,17 +765,17 @@ By far, variants of America, the United States, and the U.S. were the most commo
 
 
 
-![png](../../../images/capstone_final_writeup_files/capstone_final_writeup_27_0.png)
+![png](/img/nlp/27_0.png)
 
 
 
 
-![png](../../../images/capstone_final_writeup_files/capstone_final_writeup_28_0.png)
+![png](/img/nlp/28_0.png)
 
 
 
 
-![png](../../../images/capstone_final_writeup_files/trump_count.png)
+![png](/img/nlp/count.png)
 
 This graph really demonstrates how ubiquitous Trump is in the news. He averages 4.5 mentions per politics article, and even half a mention per science/health article. The second most commonly mentioned people were Obama (politics and opinion), Peter Thiel (the inventor of Paypal, business/technology), Andrew Rosenberg (Union of Concerned Scientists, science/health) and "Kim" (world news). One of the flaws in my processing pipeline is that words are tokenized into unigrams before being tagged by the Name Entity Recognizer, so first and last names are split. Given that "Jong" was the number three most common name in world news, I can infer that this Kim refers to Kim Jong Un or Kim Jong Il, rather than Kardashian, but the number two mention in entertainment, "David" is less clear. The upside of tagging only unigrams is that I learned that the entertainment section refers to people by their first names more commonly than other sections, as many of the top twenty most common people were first names.
 
@@ -1078,7 +1078,7 @@ sp.plot_topic(topic = 'Ivanka', date = datetime(2017,1,1))
 ```
 
 
-![png](../../../images/capstone_final_writeup_files/capstone_final_writeup_33_0.png)
+![png](/img/nlp/33_0.png)
 
 
 # V. Feature Selection
@@ -1090,7 +1090,7 @@ Since the TfidfVectorizer yielded approximately 119,000 unigrams and bigrams, fe
 I tried a Principal Component Analysis and found that 80% of variance in the data could be explained with around 500 principal components, and over 90% could be explained with 800 principal components. However, when I fit a Naive Bayes classifier using 800 principal components, accuracy was only 56%. This low score, plus the loss of interpretability of the principal components made PCA less appealing than other dimensionality reduction methods.
 
 
-![png](../../../images/capstone_final_writeup_files/capstone_final_writeup_35_0.png)
+![png](/img/nlp/35_0.png)
 
 
 
@@ -1100,7 +1100,7 @@ The chi2 criterion is useful in feature selection for text classification tasks 
 
 
 
-![png](../../../images/capstone_final_writeup_files/capstone_final_writeup_37_0.png)
+![png](/img/nlp/37_0.png)
 
 
 
@@ -1108,7 +1108,7 @@ This table lists the 15 most informative unigrams and bigrams, sorted by p-value
 
 
 
-![png](../../../images/capstone_final_writeup_files/capstone_final_writeup_39_0.png)
+![png](/img/nlp/39_0.png)
 
 
 
@@ -1171,7 +1171,7 @@ I witheld 30% of the data as a test set, and used a 5-fold cross-validated grid 
 
 
 
-![png](../../../images/capstone_final_writeup_files/capstone_final_writeup_45_0.png)
+![png](/img/nlp/45_0.png)
 
 
 
@@ -1185,13 +1185,13 @@ However, it's worth noting that the Naive Bayes model runs much, much faster tha
 
 
 
-![png](../../../images/capstone_final_writeup_files/capstone_final_writeup_47_0.png)
+![png](/img/nlp/47_0.png)
 
 
 
 
 
-![png](../../../images/capstone_final_writeup_files/capstone_final_writeup_48_0.png)
+![png](/img/nlp/48_0.png)
 
 
 
@@ -1199,13 +1199,13 @@ However, it's worth noting that the Naive Bayes model runs much, much faster tha
 
 
 
-![png](../../../images/capstone_final_writeup_files/capstone_final_writeup_50_0.png)
+![png](/img/nlp/50_0.png)
 
 
 
 
 
-![png](../../../images/capstone_final_writeup_files/capstone_final_writeup_51_0.png)
+![png](/img/nlp/51_0.png)
 
 
 
@@ -1300,7 +1300,7 @@ train_scores_mean = np.mean(train_scores, axis = 1)
 test_scores_mean = np.mean(valid_scores, axis = 1)
 ```
 
-![png](../../../images/capstone_final_writeup_files/capstone_final_writeup_55_0.png)
+![png](/img/nlp/55_0.png)
 
 
 
@@ -1308,7 +1308,7 @@ However, the cross-validation score of the SGDClassifier does not seem to have p
 
 
 
-![png](../../../images/capstone_final_writeup_files/capstone_final_writeup_57_0.png)
+![png](/img/nlp/57_0.png)
 
 
 
