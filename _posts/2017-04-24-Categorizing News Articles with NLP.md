@@ -5,25 +5,25 @@ category: project
 tags: [NLP, pipeline, sentiment analysis, named entity recognition, Naive Bayes, webscraping, feature selection]
 ---
 
-# I. Introduction
+# Introduction
 
 In this post, I'll summarize the exploratory data analyses I performed, explain the feature engineering and reduction steps I utilized, and present my final models to classify news articles.
 
-## A. Problem Statement
+## Proposition
 
 The goal of this project was to classify news articles into business/technology, entertainment, opinion, politics, science/health, sports, or world news categories using only features derived from text.
 
-## B. Risks and Assumptions
+## About the webscapping
 To make a general classifier that would be effective on an article from any source from any era is a huge undertaking. Given the available training data, this one is specific to the topics in the news from three sources in 2017. A very general classifier would require frequent re-training to combat "subject drift" [1]. For instance, given the presidential election, Donald Trump is featured prominently in almost every newspaper section, but this almost certainly wasn't the case one or two years ago, and may not be the case in the future. As new political figures rise in prominence, Donald Trump may become a more or less informative person for classifying a politics or world news article.
 
 I also relied heavily on tagged datasets and tools developed by the Stanford NLP group. Any inaccuracies that are built into the out-of-the-box versions of the WordNetLemmatizer, Part-of-Speech-Tagger, or NERTagger are therefore built into my own analysis. I believe it is possible to make case-specific modifications to how certain names or locations are tagged, but that was beyond the scope of this project.
 
-## C. Overview
+## Overview
 From a corpus of 4,846 news articles from three sources, I extracted a vocabulary of 5,000 terms, derived named entity counts and sentiment scores, and used these to train Naive Bayes and Stochastic Gradient Descent classifiers to perform with ~85% accuracy in a seven-class discrimination task.
 
-# II. Data Acquisition and Cleaning
+# Data Acquisition and Cleaning
 
-## A. Webscraping
+## Webscraping
 Between January  - April, 2017, I web-scraped full-text articles from *The New York Times* (2,646), *The Washington Post* (1,357), and FoxNews.com (843). I would typically run the scrapers at least twice a day in order to get a fresh batch of articles, since the sites seemed to use Javascript to continuously refresh new articles at the end of the page rather than listing sequential pages going backward in time, and archives were generally inaccessible. The FoxNews site was particularly difficult to work with, as its 'Opinion' page and 'Latest' page were structured differently from general article pages, necessitating three different scrapers to get articles in each category. In addition, the *New York Times* site required cookie storage, so I implemented a CookieJar object from cookielib as a workaround. For each article, I recorded the title, author, date of publication, source, whatever section the source designated it to come from, and the url.
 
 I stored the articles in a local PostgreSQL database. Each scraper would deposit articles into a staging table, from which only unique articles would be moved into a particular table for that source. I used titles to determine whether or not a particular article had been already scraped and stored, as I assumed a source wouldn't publish two stories with the same title in timespan of this project.
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     main()
 ```
 
-## B. Data Cleaning and Standardization
+## Data Pre processing
 
 Since each source has its own uniquely named sections with multiple subsections, I had to judge which articles should be grouped together. Initially, I had eleven categories: world news, politics, entertainment, business, technology, science, health, sports, opinion, education, and other. I decided to combine science and health, as many of the science articles were related to the human body anyways, and merged business and technology, as most of the business articles were about technology companies. I dropped 'other' from analysis, since this was an amalgam of local news, obituaries, and other miscellany, as well as education, due to low numbers. This left me with the final seven categories: world, politics, entertainment, science/health, business/technology, sports, and opinion.
 
@@ -337,9 +337,9 @@ data.head()
 
 
 
-# III. Feature Engineering
+# Feature Engineering
 
-## A. Sentiment Analysis
+## Sentiment Analysis
 
 Sentiment analysis approximates the overall polarity of a text by scoring its positive, negative and neutral words on a scale from -1 to 1. To score each article title or body, I used a compute_score function that lemmatizes each word using NLTK's WordNetLemmatizer, and then tags it with its part of speech using the PerceptronTagger. This allows each word to be matched to a synset, or synonym set in SentiwordNet, a resource that maps thousands of English words to their sentiment scores. Although a particular word can potentially belong to multiple synsets depending on its usage in a sentence, I opted to just select the first one.
 
@@ -384,7 +384,7 @@ def compute_score(sentence):
     return data
 ```
 
-## B. Named Entity Recognition
+## Named Entity Recognition
 
 Named entity recognition seeks to identify people, places, times, dates, or other elements from text. I utilized the Stanford NLP group's three-class model and an NLTK wrapper to identify people and places in each article. Additionally, NLTK comes with a corpus of tagged male and female names, so I counted how many men and women were mentioned in article titles and bodies. I wrote a count_entities function that tokenizes a text, uses Stanford's NERTagger to tag all people and places, and then counts them. However, I have to note that if a name isn't within the name corpus, it's possible for the function recognize and count people, but not know whether they are male or female, so these counts have varying levels of accuracy.
 
@@ -522,7 +522,7 @@ top_200[:5]
 
 
 
-## C. Custom Transformers
+## Custom Transformers
 
 To actually derive these features for article titles or bodies, I wrote two transformer classes, **TitleTransformer** and **BodyTransformer**. Each of these classes inherits the methods from Scikit-Learn's BaseEstimator and TransformerMixin classes, which allows them to be utilized in pipelines. Using the fit_transform method from one of these scalers on an **ArticleData** object returns a dataframe containing sentiment scores, as well as the number of people, number of men and women, and number of places in each article.
 
@@ -699,7 +699,7 @@ test_data_bt
 
 
 
-## D. Tf-Idf Vectors
+## Tf-Idf Vectors
 
 The vast majority of the feature set are Tf-Idf vectors from Scikit-Learn's TfidfVectorizer. Tf-Ddf stands for "Term Frequency-Inverse Document Frequency" and weighs the frequency with which a word appears in a given document against how common it is in the entire corpus. So a word that occurs very often in one document, but is rare in the corpus would have a higher Tf-Idf value.
 
@@ -745,9 +745,9 @@ def tokenize(text):
 tfidf = TfidfVectorizer(preprocessor = tokenize, ngram_range = (1,2), min_df = 10)
 ```
 
-# IV. Exploratory Data Analysis
+# Exploratory Data Analysis
 
-## A. Sentiment Scores
+## Sentiment Scores
 
 Although sentiment scores can range from -1 to 1, I found that the scores of articles from each section only ranged from about -0.1 to 0.1. This makes sense, since the news aims for impartial reporting. Within this range, world news had the lowest average score (-0.005), while entertainment had the highest (0.009). A t-test indicated that this difference, though minuscule, was statistically significant (t = -21.60, p << 0.005, df = 1702).
 
@@ -757,7 +757,7 @@ Although sentiment scores can range from -1 to 1, I found that the scores of art
 
 
 
-## B. Named Entities
+## Named Entities
 
 Overall, every section had more total (not unique) mentions of people than places, and of those, vastly more mentions of men than women. Sports, politics, and entertainment had the most person mentions, while world news had the most places. Entertainment had the most mentions of women.
 
@@ -779,7 +779,7 @@ By far, variants of America, the United States, and the U.S. were the most commo
 
 This graph really demonstrates how ubiquitous Trump is in the news. He averages 4.5 mentions per politics article, and even half a mention per science/health article. The second most commonly mentioned people were Obama (politics and opinion), Peter Thiel (the inventor of Paypal, business/technology), Andrew Rosenberg (Union of Concerned Scientists, science/health) and "Kim" (world news). One of the flaws in my processing pipeline is that words are tokenized into unigrams before being tagged by the Name Entity Recognizer, so first and last names are split. Given that "Jong" was the number three most common name in world news, I can infer that this Kim refers to Kim Jong Un or Kim Jong Il, rather than Kardashian, but the number two mention in entertainment, "David" is less clear. The upside of tagging only unigrams is that I learned that the entertainment section refers to people by their first names more commonly than other sections, as many of the top twenty most common people were first names.
 
-## C. Plotting with HighCharts
+## Plotting with HighCharts
 
 I thought it might be interesting to plot the fluctuation in sentiment of a particular topic over time. The **SentimentPlotter** class extracts all scores of articles mentioning a topic for the selected source and section, and returns them as Javascript arrays ready for insertion into a Highcharts script. The resulting graph shows the mean score for articles by day, as well as error bars for the minimum and maximum scores on that day. Mousing over the end of an error bar will reveal the title of the article that earned the high or low score. In addition the plot_topic function does the same thing, but produces a static image using the Seaborn plotting library.
 
@@ -1081,11 +1081,11 @@ sp.plot_topic(topic = 'Ivanka', date = datetime(2017,1,1))
 ![png](/img/nlp/33_0.png)
 
 
-# V. Feature Selection
+# Feature Selection
 
 Since the TfidfVectorizer yielded approximately 119,000 unigrams and bigrams, feature reduction was a necessity. Every unique word in a document can represent a new feature, so it's important to identify which words are the most informative and train a model on those, discarding the less informative words in order to reduce dimensionality and save time transforming data and fitting models. In addition, having a set vocabulary allows a classifier to work on new articles that may contain words it's never seen before. Since the news reports on new topics daily, this vocabulary would have to be continuously updated and optimized to account for content drift over time and to maintain a high level of accuracy.
 
-## A. PCA
+## PCA
 
 I tried a Principal Component Analysis and found that 80% of variance in the data could be explained with around 500 principal components, and over 90% could be explained with 800 principal components. However, when I fit a Naive Bayes classifier using 800 principal components, accuracy was only 56%. This low score, plus the loss of interpretability of the principal components made PCA less appealing than other dimensionality reduction methods.
 
@@ -1094,7 +1094,7 @@ I tried a Principal Component Analysis and found that 80% of variance in the dat
 
 
 
-## B. SelectKBest
+## SelectKBest
 
 The chi2 criterion is useful in feature selection for text classification tasks [3], so I compared the performance of Scikit-Learn's SelectKBest selector with k ranging from 100 to the full feature set with the chi2 scoring function, and assessed performance using a Bernoulli Naive Bayes classifier. Accuracy began to plateau with around 5000 features, so I built a vocabulary based on the top 5000 most informative features.
 
@@ -1112,12 +1112,12 @@ This table lists the 15 most informative unigrams and bigrams, sorted by p-value
 
 
 
-# VI. Pipeline
+# Pipeline
 
 This pipeline can be used to format new articles for classification. It includes all necessary transformations on an **ArticleData** object, as well as a scaling step. However, the entire pipeline does not preserve column names, so it is unfit for exploratory data analysis. If column names need to be preserved, **TitleTransformer** and **BodyTransformer** can be applied separately, and their results concatenated with the 'condensed_section' column for analysis.
 
 
-## A. ItemSelector
+## ItemSelector
 
 **TitleTransformer** and **BodyTransformer** are written to only perform operations on the 'title' and 'body' columns of an **ArticleData** object. However, since the TfidfVectorizer need only be applied to the article bodies, I needed another transformer that could select a particular column and pass it on. ItemSelector can be combined with another more general Transformer in a sub-pipeline to apply a transformation to a subset of the total data.
 
@@ -1134,7 +1134,7 @@ class ItemSelector(BaseEstimator, TransformerMixin):
         return(X[self.key])
 ```
 
-## B. The Complete Pipeline
+## The Complete Pipeline
 
 All features are derived and combined in a FeatureUnion during the 'features' step: applying title and body transformations, Tf-Idf vectorizing with a vocabulary of the top 5000 words derived from K-Best selection ('bigram_vocab'), and a transformation to dense.
 
@@ -1161,7 +1161,7 @@ pipe = Pipeline([('features', FeatureUnion([('t',TitleTransformer()),
 Xt = pipe.fit_transform(data)
 ```
 
-# VII. Models
+# Models
 
 Naive Bayes are the go-to models for text classification tasks, as they are reasonably efficient and robust to errors, especially when the sample size is relatively small [1]. However, other viable options include decision trees, K-Nearest Neighbors, and Support Vector Machines.
 
@@ -1175,13 +1175,13 @@ I witheld 30% of the data as a test set, and used a 5-fold cross-validated grid 
 
 
 
-# VIII. Model Evaluation
+# Model Evaluation
 
 The confusion matrices for the two top-performing models contain diagonal bands of high values indicating the correctly categorized articles. The most difficult section to classify appears to be business/technology, as it has the lowest f1-score for both classifiers, though the SGDClassifier slightly out-performs the Naive Bayes. The opinion section also appears to pose some challenges for both classifiers, as both have low recall scores for this section, meaning that many opinion pieces are misclassified into other sections. This seems like a natural mistake to make, as an opinion piece could be written about any topic, and therefore, topical feature words might be less informative.
 
 However, it's worth noting that the Naive Bayes model runs much, much faster than the SGDClassifier (a matter of minutes rather than hours).
 
-## A. Bernoulli Naive Bayes
+## Bernoulli Naive Bayes
 
 
 
@@ -1195,7 +1195,7 @@ However, it's worth noting that the Naive Bayes model runs much, much faster tha
 
 
 
-## B. SGDClassifier
+## SGDClassifier
 
 
 
@@ -1285,7 +1285,7 @@ d3.csv("../coef_df.csv", function(d) {
 </script>
 
 
-# IX. Learning Curves
+# Learning Curves
 
 To investigate whether or not the classifiers might benefit from more data, I plotted the learning curves of the Bernoulli Naive Bayes and the SGDClassifiers. The training and cross-validation scores of the Naives Bayes classifier seem to be converging around 85%, so this model may not improve much with a larger sample size, but might benefit from further feature engineering.
 
@@ -1312,7 +1312,7 @@ However, the cross-validation score of the SGDClassifier does not seem to have p
 
 
 
-# X. Conclusions and Future Directions
+# Conclusions and Future Directions
 
 This analysis has yielded two models that can classify a news article into the appropriate newspaper section with 85% accuracy. The primary use case for these classifiers is for online publishers or aggregators of news stories  to tag articles for easy searching or sorting, though they might also be useful to archivists, librarians, or any other business seeking to organize and categorize text.
 
@@ -1320,7 +1320,7 @@ There are several improvements that could be made to the classification process.
 
 However, including these features and more data would add processing time to an already slow transformation pipeline, so parallelizing this process on a framework like Spark or Hadoop would greatly facilitate the speed at which predictions could be made.
 
-# XI. References
+# References
 
 [1] Manning, C.D., Raghavan, P., Schutze, H. 2009. Introduction to Information Retrieval Online Edition. Cambridge (UK). Cambridge University Press.
 
