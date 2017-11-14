@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Categorizing News Articles with NLP
+title: Categorizing News Articles with Natural Language Processing
 category: project
 tags: [NLP, pipeline, sentiment analysis, named entity recognition, Naive Bayes, webscraping, feature selection]
 ---
