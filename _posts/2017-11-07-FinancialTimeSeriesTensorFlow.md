@@ -1,10 +1,10 @@
 ---
-title: Machine Learnig using Financial Time Series Data with TensorFlow
+title: Machine Learnig with TensorFlow 
 subtitle: By following the Sun we can predict the performance of Stock markets that close later on in the day based on what happpend in markets earlier in the day! 
-tags: [TensorFlow, Time Series, Financial Data, Vizualization]
+tags: [TensorFlow, Time Series Data, Financial Data, Vizualization]
 ---
 
-# Machine Learnig using Financial Time Series Data with TensorFlow
+# Machine Learnig with TensorFlow using Fianacial Time Series data
 
 ## Summarize
 
