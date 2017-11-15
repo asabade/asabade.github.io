@@ -1,5 +1,5 @@
 ---
-title: Machine Learnig with TensorFlow 
+title: Machine Learning with TensorFlow 
 subtitle: By following the Sun we can predict the performance of Stock markets that close later on in the day based on what happpend in markets earlier in the day! 
 tags: [TensorFlow, Time Series Data, Financial Data, Vizualization]
 ---
