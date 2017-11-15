@@ -4,7 +4,7 @@ subtitle: By following the Sun we can predict the performance of Stock markets t
 tags: [TensorFlow, Time Series Data, Financial Data, Vizualization]
 ---
 
-# Machine Learnig with Fianacial Time Series Classification using TensorFlow 
+# Machine Learning with Fianacial Time Series Classification using TensorFlow 
 
 ## Summarize
 
