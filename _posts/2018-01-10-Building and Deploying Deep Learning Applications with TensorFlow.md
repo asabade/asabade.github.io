@@ -1,7 +1,7 @@
 ---
 title: Building and Deploying Deep Learning Application with TensorFlow
-subtitle: Using data to train the neural network that will predict how much money we can expect in future to earn based on our historical data 
-tags: [TensorFlow, Time Series Data, Financial Data, Vizualization]
+subtitle: Using data to train the neural network that will predict how much revenue we can expect in future based on our historical data 
+tags: [TensorFlow, Historical Data, Financial Data, Vizualization, Google CLoud Deployment]
 ---
 
 # Using TensorFlow to build and deploy a supervised machine learning model
