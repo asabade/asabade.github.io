@@ -6,8 +6,6 @@ tags: [TensorFlow, Time Series Data, Financial Data, Vizualization]
 
 # Using TensorFlow to build and deploy a supervised machine learning model
 
-**Summarize**
-
 import os
 import tensorflow as tf
 import pandas as pd
