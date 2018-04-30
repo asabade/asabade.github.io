@@ -1,10 +1,10 @@
 
 # Data Science Resources (All in one)
 
-## Book list:
+## Book list for re:
 
-* [Speech and Language Processing (3rd ed. draft)](https://web.stanford.edu/~jurafsky/slp3/) -Ongoing-
-* [Computer Age Statistical Inference](https://web.stanford.edu/~hastie/CASI/) -Ongoing-
+* [Speech and Language Processing (3rd ed. draft)](https://web.stanford.edu/~jurafsky/slp3/) 
+* [Computer Age Statistical Inference](https://web.stanford.edu/~hastie/CASI/) 
 * The Elements of Statistical Learning
 * Reinforcement Learning: An Introduction 
 * Applied Predictive Modeling
