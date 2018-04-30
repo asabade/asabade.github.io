@@ -1,9 +1,5 @@
 
-# Data Science Resources (Mostly Free)
-
-The first half is more or less my learning path in the past two years while the second half is my plan for this year. I tried to make a balance between comprehension and doability. For more extensive lists, you can check [Github search](https://github.com/search?utf8=%E2%9C%93&q=awesome+machine+learning&type=) or [CS video lectures](https://github.com/Developer-Y/cs-video-courses)
-
-
+# Data Science Resources (All in one)
 ***
 ## Table of Contents
 
